@@ -69,7 +69,7 @@ quantum.entangle = {
 As you can see both of these entangles have the same destination, so you should not try and have both of these configs enabled at the same time as this will cause a collision/undefined behavior. However this can be very powerfull if you want to fully separate different environments without needing to worry about nix store stuff. 
 
 ## Limitations
-Quantum does not rely on other files to track what directories are dropped on a rebuild. If you bindmount a directory, and then remove that entangle from your config, the directory/file will still remind, just without an entangle. You are safe to delete the folder, but currently quantum *does not* do that for you. 
+Quantum does not rely on other files to track what directories are dropped on a rebuild. If you bindmount a directory, and then remove that entangle from your config, the directory/file will still remain, just without an entangle. You are safe to delete the folder, but currently quantum *does not* do that for you. 
 
 Quantum *will* clobber existing folders/files though through its prune service that runs before mounting occurs. Be very careful with the order in which you start an entangle on a file/dir. The workflow for moving a file/folder to quantum should always be. 
 1. *MOVE* that folder/file to the quantum dir.
