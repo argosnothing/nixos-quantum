@@ -31,7 +31,7 @@ In my case I have this directory in my nixos-config under .quantum, as I use thi
 ```nix
 quantum = {
   quantum-dir = "/home/${username}/nixos-config/.quantum";
-    inherit username;
+  inherit username;
 };
 ```
 
