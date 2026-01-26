@@ -114,12 +114,10 @@ in {
 
     systemd.services.quantum-prune = {
       description = "Quantum: prune conflicting mountpoints before bind mounts";
-      wantedBy = ["local-fs.target"];
       before = ["local-fs.target"];
       after = ["systemd-tmpfiles-setup.service"];
       serviceConfig = {
         Type = "oneshot";
-        RemainAfterExit = true;
 
         Environment = [
           "FINDMNT_BIN=${pkgs.util-linux}/bin/findmnt"
@@ -133,7 +131,7 @@ in {
             home
           ]
           ++ lib.concatMap (p: ["--files" p]) (files ++ entangle-file-dsts)
-          ++ lib.concatMap (p: ["--dirs" p]) dirs ++ entangle-folder-dsts);
+          ++ lib.concatMap (p: ["--dirs" p]) (dirs ++ entangle-folder-dsts));
       };
     };
   };
