@@ -47,7 +47,7 @@ You can also bindmount files in a similar way with `quantum.files`
 ### Entanglement
 You do not need to map the directories in your quantum directory to the structure of your home dir you want it mapped to. 
 ```nix
-quantum.entangle = {
+quantum.entangle-files = {
   "wowza" = "banana/wowza";
 };
 ```
@@ -56,13 +56,13 @@ When powerful use of this is to maintain separate out of store gtk configs for d
 example: 
 gnome
 ```nix
-quantum.entangle = {
+quantum.entangle-folders = {
   "gnome/.config/gtk-3.0" = ".config/gtk-3.0";
 };
 ```
 plasma
 ```nix
-quantum.entangle = {
+quantum.entangle-folders = {
   "plasma/.config/gtk-3.0" = ".config/gtk-3.0";
 };
 ```
