@@ -1,8 +1,10 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
+  prune-script = pkgs.writeShellScriptBin "quantum-prune" (builtins.readFile ./scripts/quantum-prune.sh);
   assertNoHomeDirs = paths:
     assert (lib.assertMsg (!lib.any (lib.hasPrefix "/home") paths) "/home used in a root link!"); paths;
   user = config.quantum.username;
@@ -18,6 +20,10 @@
     type = "none";
     options = "bind,nofail";
     wantedBy = ["local-fs.target"];
+
+    # Prune first!
+    after = ["quantum-prune.service"];
+    require = ["quantum-prune.service"];
   };
 
   mkEntangleMount = src: dst: {
@@ -26,6 +32,10 @@
     type = "none";
     options = "bind,nofail";
     wantedBy = ["local-fs.target"];
+
+    # Prune first!
+    after = ["quantum-prune.service"];
+    require = ["quantum-prune.service"];
   };
 
   mkDirRule = rel: "d ${home}/${rel} 0755 ${user} users - -";
@@ -90,5 +100,29 @@ in {
       (map mkMount dirs)
       ++ (map mkMount files)
       ++ (lib.mapAttrsToList mkEntangleMount entangle);
+
+    systemd.services.quantum-prune = {
+      description = "Quantum: prune conflicting mountpoints before bind mounts";
+      wantedBy = ["local-fs.target"];
+      before = ["local-fs.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+
+        Environment = [
+          "FINDMNT_BIN=${pkgs.util-linux}/bin/findmnt"
+          "UMOUNT_BIN=${pkgs.util-linux}/bin/umount"
+          "RM_BIN=${pkgs.coreutils}/bin/rm"
+        ];
+
+        ExecStart = lib.concatStringsSep " " ([
+            "${prune-script}/bin/quantum-prune"
+            "--home"
+            home
+          ]
+          ++ lib.concatMap (p: ["--files" p]) (files ++ entangleDsts)
+          ++ lib.concatMap (p: ["--dirs" p]) dirs);
+      };
+    };
   };
 }
