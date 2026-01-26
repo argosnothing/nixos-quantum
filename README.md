@@ -36,7 +36,7 @@ quantum = {
 ```
 
 Example use: 
-This will bind mount ~/home/${username}/nixos-config/.quantum/.config/xfce to ~/.config/xfce ( this is why you need to supply the username ). 
+This will bind mount ~/nixos-config/.quantum/.config/xfce to ~/.config/xfce ( this is why you need to supply the username ). 
 ```nix
 quantum.directories = [
   ".config/xfce4"
