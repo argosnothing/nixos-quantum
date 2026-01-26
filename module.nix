@@ -12,7 +12,8 @@
   quantum-root = config.quantum.quantum-dir;
   dirs = config.quantum.directories or [];
   files = config.quantum.files or [];
-  entangle = config.quantum.entangle or {};
+  entangle-folders = config.quantum.entangle-folders or {};
+  entangle-files = config.quantum.entangle-files or {};
 
   mkMount = rel: {
     what = "${quantum-root}/${rel}";
@@ -55,7 +56,8 @@
     then null
     else "d ${home}/${pd} 0755 ${user} users - -";
 
-  entangleDsts = builtins.attrValues entangle;
+  entangle-file-dsts = builtins.attrValues entangle-files;
+  entangle-folder-dsts = builtins.attrValues entangle-folders;
 in {
   options = {
     quantum = {
@@ -79,7 +81,14 @@ in {
         apply = assertNoHomeDirs;
         description = "Files to entangle in quantum directory";
       };
-      entangle = lib.mkOption {
+      entangle-files = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = {};
+        description = ''
+          path relative to quantum directory → path relative to home.
+        '';
+      };
+      entangle-folders = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
         default = {};
         description = ''
@@ -93,36 +102,32 @@ in {
       (builtins.filter (x: x != null) (map mkParentRule files))
       ++ (map mkDirRule dirs)
       ++ (map mkFileRule files)
-      ++ (builtins.filter (x: x != null) (map mkParentRule entangleDsts))
-      ++ (map mkFileRule entangleDsts);
+      ++ (builtins.filter (x: x != null) (map mkParentRule entangle-file-dsts))
+      ++ (map mkFileRule entangle-file-dsts)
+      ++ (map mkDirRule entangle-folder-dsts);
 
     systemd.mounts =
       (map mkMount dirs)
       ++ (map mkMount files)
-      ++ (lib.mapAttrsToList mkEntangleMount entangle);
+      ++ (lib.mapAttrsToList mkEntangleMount entangle-files)
+      ++ (lib.mapAttrsToList mkEntangleMount entangle-folders);
 
     systemd.services.quantum-prune = {
       description = "Quantum: prune conflicting mountpoints before bind mounts";
-      wantedBy = ["local-fs.target"];
-      before = ["local-fs.target"];
-      after = ["systemd-tmpfiles-setup.service"];
       serviceConfig = {
         Type = "oneshot";
-        RemainAfterExit = true;
-
         Environment = [
           "FINDMNT_BIN=${pkgs.util-linux}/bin/findmnt"
           "UMOUNT_BIN=${pkgs.util-linux}/bin/umount"
           "RM_BIN=${pkgs.coreutils}/bin/rm"
         ];
-
         ExecStart = lib.concatStringsSep " " ([
             "${prune-script}/bin/quantum-prune"
             "--home"
             home
           ]
-          ++ lib.concatMap (p: ["--files" p]) (files ++ entangleDsts)
-          ++ lib.concatMap (p: ["--dirs" p]) dirs);
+          ++ lib.concatMap (p: ["--files" p]) (files ++ entangle-file-dsts)
+          ++ lib.concatMap (p: ["--dirs" p]) (dirs ++ entangle-folder-dsts));
       };
     };
   };
