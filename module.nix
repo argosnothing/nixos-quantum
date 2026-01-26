@@ -114,17 +114,13 @@ in {
 
     systemd.services.quantum-prune = {
       description = "Quantum: prune conflicting mountpoints before bind mounts";
-      before = ["local-fs.target"];
-      after = ["systemd-tmpfiles-setup.service"];
       serviceConfig = {
         Type = "oneshot";
-
         Environment = [
           "FINDMNT_BIN=${pkgs.util-linux}/bin/findmnt"
           "UMOUNT_BIN=${pkgs.util-linux}/bin/umount"
           "RM_BIN=${pkgs.coreutils}/bin/rm"
         ];
-
         ExecStart = lib.concatStringsSep " " ([
             "${prune-script}/bin/quantum-prune"
             "--home"
