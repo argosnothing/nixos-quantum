@@ -23,7 +23,7 @@
 
     # Prune first!
     after = ["quantum-prune.service"];
-    require = ["quantum-prune.service"];
+    requires = ["quantum-prune.service"];
   };
 
   mkEntangleMount = src: dst: {
@@ -35,7 +35,7 @@
 
     # Prune first!
     after = ["quantum-prune.service"];
-    require = ["quantum-prune.service"];
+    requires = ["quantum-prune.service"];
   };
 
   mkDirRule = rel: "d ${home}/${rel} 0755 ${user} users - -";
