@@ -51,7 +51,7 @@ quantum.entangle = {
   "wowza" = "banana/wowza";
 };
 ```
-When powerful use of this is to maintain separate out of store gtk configs for different desktop environments. You could have a plasma quantum entangle with its own gtk folders, and a gnome one with its own, by using diff parent directories that map onto the homes gtk. 
+A powerful use of this is to maintain separate out of store gtk configs for different desktop environments. You could have a plasma quantum entangle with its own gtk folders, and a gnome one with its own, by using diff parent directories that map onto the homes gtk. 
 
 example: 
 gnome
