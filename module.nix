@@ -105,6 +105,7 @@ in {
       description = "Quantum: prune conflicting mountpoints before bind mounts";
       wantedBy = ["local-fs.target"];
       before = ["local-fs.target"];
+      after = ["systemd-tmpfiles-setup.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
