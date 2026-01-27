@@ -1,6 +1,9 @@
 # NixOS Quantum
 NixOS Quantum is an alternative way to out-of-store manage some of your dots. It's an alternative to using stow with symlinking. It uses bind-mounts so applications that write config files will not "unlink" the files linked, in addition you can bind-mount entire directories allowing you to capture newly created files into your quantum directory. 
 
+### Warnings
+This is still in early progress, and I personally use this, there are likely bugs and there is always risk to using *some guys* implementation, especially this module as it can delete files and folders, please read carefully and understand the risks. 
+
 ### Q:
 
 * Why not ...
