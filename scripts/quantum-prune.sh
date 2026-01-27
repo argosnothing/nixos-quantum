@@ -57,8 +57,9 @@ umount_if_mounted() {
 for rel in "${FILES[@]}"; do
   [ -n "$rel" ] || continue
   p="${HOME_DIR%/}/$rel"
-  umount_if_mounted "$p"
+
   if [ -d "$p" ] && [ ! -L "$p" ]; then
+    umount_if_mounted "$p"
     "$rm_bin" -rf --one-file-system "$p"
   fi
 done
@@ -66,8 +67,9 @@ done
 for rel in "${DIRS[@]}"; do
   [ -n "$rel" ] || continue
   p="${HOME_DIR%/}/$rel"
-  umount_if_mounted "$p"
+
   if [ -e "$p" ] && [ ! -d "$p" ]; then
+    umount_if_mounted "$p"
     "$rm_bin" -f "$p"
   fi
 done
