@@ -121,7 +121,7 @@ in {
           "UMOUNT_BIN=${pkgs.util-linux}/bin/umount"
           "RM_BIN=${pkgs.coreutils}/bin/rm"
         ];
-        ExecStart = lib.concatStringsSep " " ([
+        ExecStart = lib.escapeShellArgs ([
             "${prune-script}/bin/quantum-prune"
             "--home"
             home
