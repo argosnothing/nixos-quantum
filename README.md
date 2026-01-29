@@ -3,6 +3,9 @@ NixOS Quantum is an alternative way to out-of-store manage some of your dots. It
 
 ### Warnings
 This is still in early progress, and I personally use this, there are likely bugs and there is always risk to using *some guys* implementation, especially this module as it can delete files and folders, please read carefully and understand the risks. 
+### Another warning
+I do not recommend you use this tool unless you specifically need a bind mount for some reason, and want those bind mounts to be tied to your nix config.
+If you need it you will know that you need it, if you don't, do not use this tool and it represents a massive anti-pattern.
 
 ### Q:
 
